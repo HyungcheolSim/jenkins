@@ -21,9 +21,9 @@ pipeline {
             steps {
                 echo 'Clonning Repository'
 
-                git url: 'https://github.com/frontalnh/temp.git',
+                git url: 'https://github.com/HyungcheolSim/jenkins.git',
                     branch: 'master',
-                    credentialsId: 'jenkinsgit'
+                    credentialsId: 'jenkins_awsserver'
             }
 
             post {
@@ -50,7 +50,7 @@ pipeline {
             // 프론트엔드 디렉토리의 정적파일들을 S3 에 올림, 이 전에 반드시 EC2 instance profile 을 등록해야함.
             dir ('./website'){
                 sh '''
-                aws s3 sync ./ s3://namhoontest
+                aws s3 sync ./ s3://sprintdevjr
                 '''
             }
           }
@@ -61,7 +61,7 @@ pipeline {
               success {
                   echo 'Successfully Cloned Repository'
 
-                  mail  to: 'frontalnh@gmail.com',
+                  mail  to: 'harry.sim@sprintapp.co',
                         subject: "Deploy Frontend Success",
                         body: "Successfully deployed frontend!"
 
@@ -70,7 +70,7 @@ pipeline {
               failure {
                   echo 'I failed :('
 
-                  mail  to: 'frontalnh@gmail.com',
+                  mail  to: 'harry.sim@sprintapp.co',
                         subject: "Failed Pipelinee",
                         body: "Something is wrong with deploy frontend"
               }
@@ -112,7 +112,7 @@ pipeline {
             }
           }
         }
-        
+        // 2번째 실행부터는 sh 아래 docker rm -f $(docker ps -aq) 추가
         stage('Bulid Backend') {
           agent any
           steps {
@@ -120,6 +120,7 @@ pipeline {
 
             dir ('./server'){
                 sh """
+                
                 docker build . -t server --build-arg env=${PROD}
                 """
             }
@@ -148,7 +149,7 @@ pipeline {
 
           post {
             success {
-              mail  to: 'frontalnh@gmail.com',
+              mail  to: 'harry.sim@sprintapp.co',
                     subject: "Deploy Success",
                     body: "Successfully deployed!"
                   
