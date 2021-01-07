@@ -22,7 +22,7 @@ pipeline {
                 echo 'Clonning Repository'
 
                 git url: 'https://github.com/HyungcheolSim/jenkins.git',
-                    branch: 'master',
+                    branch: 'main',
                     credentialsId: 'jenkins_awsserver'
             }
 
